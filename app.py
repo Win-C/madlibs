@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request
 from flask_debugtoolbar import DebugToolbarExtension
 
-from stories import silly_story as story
+import stories
+
+STORY = None
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "secret"
@@ -9,23 +11,32 @@ app.config['SECRET_KEY'] = "secret"
 debug = DebugToolbarExtension(app)
 
 
+@app.route("/")
+def pick_a_story():
+    """ Shows a dropdown list for user to select a story """
+
+    return render_template("home.html", story_options=stories.story_list)
+
+
 @app.route("/questions")
 def show_questions():
     """ Shows the form that requires inputs needed to create
     story instance """
 
-    form_inputs = story.prompts
+    STORY = request.args["selected"]
+    form_inputs = stories.story_list[STORY].prompts
 
-    return render_template("questions.html", prompts=form_inputs)
+    return render_template("questions.html",
+                           selected=STORY,
+                           prompts=form_inputs)
 
 
-@app.route("/story")
-def make_story():
+@app.route("/story/<selected>")
+def make_story(selected):
     """ Create a story page from user input on /questions """
 
-# could just pass request.args because its already a dict.
-    # user_input = {key: request.args[key] for key in request.args.keys()}
     user_input = request.args
-    text = story.generate(user_input)
+    story_instance = getattr(stories, f"{selected}_story")
+    text = story_instance.generate(user_input)
 
     return render_template('story.html', user_story=text)
