@@ -23,7 +23,9 @@ def show_questions():
 def make_story():
     """ Create a story page from user input on /questions """
 
-    user_input = {key: request.args[key] for key in request.args.keys()}
+# could just pass request.args because its already a dict.
+    # user_input = {key: request.args[key] for key in request.args.keys()}
+    user_input = request.args
     text = story.generate(user_input)
 
     return render_template('story.html', user_story=text)
