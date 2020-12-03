@@ -3,8 +3,6 @@ from flask_debugtoolbar import DebugToolbarExtension
 
 import stories
 
-STORY = None
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "secret"
 
@@ -23,20 +21,20 @@ def show_questions():
     """ Shows the form that requires inputs needed to create
     story instance """
 
-    STORY = request.args["selected"]
-    form_inputs = stories.story_list[STORY].prompts
+    story_name = request.args["selected"]
+    form_inputs = stories.story_list[story_name].prompts
 
     return render_template("questions.html",
-                           selected=STORY,
+                           selected_story=story_name,
                            prompts=form_inputs)
 
 
-@app.route("/story/<selected>")
-def make_story(selected):
+@app.route("/story/<selected_story>")
+def make_story(selected_story):
     """ Create a story page from user input on /questions """
 
     user_input = request.args
-    story_instance = getattr(stories, f"{selected}_story")
+    story_instance = getattr(stories, f"{selected_story}_story")
     text = story_instance.generate(user_input)
 
     return render_template('story.html', user_story=text)

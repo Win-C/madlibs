@@ -6,8 +6,9 @@
 
   <h1 class="pt-4 mb-3 text-center">Madlibs!</h1>
 
-  <form action="/story/{{ selected }}" class="pb-4">
-    
+  <form action="/story/{{ selected_story }}" class="pb-4">
+    <!-- Another approach to passing along values and a good debug option flipping type to text -->
+  <!-- <input type=hidden name={{ selected_story }} value={{ selected_story }}> -->
   {% for prompt in prompts %}
     <div class="form-group row">
       <label class="col-5 col-form-label text-right">{{ prompt }}</label>
